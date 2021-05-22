@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<read>
+    <title>Calculadora de Emprestimos</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles/styles.css">
+</read>
+
+<body>
+    <table>
+        <tr>
+            <th>Enter Loan data</th>
+            <td></td>
+            <th>Loan balance qualquer poha, Cumulaive Equiey, and Interset Paymente</th>
+        </tr>
+
+        <tr>
+            <td>Amount of the loan ($), (Mountante de Emprestimo):</td>
+            <td><input id="amount" onchange="calculate();"></td>
+
+            <td rowspan=8>
+                <canvas id="graph" width="400" height="250"></canvas>
+            </td>
+
+        </tr>
+
+        <tr>
+            <td>Anual interset(%), (Juros anuais): </td>
+            <td><input id="apr" onchange="calculate();"></td>
+        </tr>
+
+        <tr>
+            <td>Repayment period(yers), (Periodo de pagamantos(anuais)): </td>
+            <td><input id="yers" onchenge="calculate();"></td>
+        </tr>
+
+        <tr>
+            <td>Zip Code (To finde lendr), (CEP):</td>
+            <td> <input id="zipcode" onchange="calculate();"> </td>
+        </tr>
+
+        <tr>
+            <td>Aproximete paymente, (Pagamento aprximado):</td>
+            <td><button onclick="calculate();">calculate</button></td>
+        </tr>
+
+        <tr>
+            <td>Mounthly payment:</td>
+            <td>$<span class="output" id="payment"></span></td>
+        </tr>
+
+        <tr>
+            <td>Total payment, (Pagamento total): </td>
+            <td>$<span class="output" id="total"></span></td>
+        </tr>
+
+        <tr>
+            <td>Total interset, (Juros total):</td>
+            <td>$<span class="output" id="totalinterset"></span></td>
+        </tr>
+    </table>
+
+    <script src="./js/script.js"> </script>
+
+</body>
+
+</html>
