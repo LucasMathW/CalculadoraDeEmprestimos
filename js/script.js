@@ -3,32 +3,33 @@ function calculate() {
   var apr = document.getElementById("apr");
   var yers = document.getElementById("yers");
   var zipcode = document.getElementById("zipcode");
+
   var payment = document.getElementById("payment");
   var total = document.getElementById("total");
   var totalInterset = document.getElementById("totalinterset");
 
   var principal = parseFloat(amount.value);
-  var interset = parseFloat(apr.value) / 100 / 12;
+  var interset = parseFloat(apr.value) / 100;
   var payments = parseFloat(yers.value) * 12;
 
-  var x = Math.pow(1 + interset, payments);
-  var monthly = (principal * x * interset) / (x - 1);
-  var pgmTotal = parseFloat(monthly*payments);
+  var i = ((Math.pow((1 + interset), 1/12)) - 1)
+  var monthly = principal * ((Math.pow((1+i), payments) * i) / (Math.pow((1+i), payments) -1))
+  var totalPayment = parseFloat(monthly * payments)
 
   if (isFinite(monthly)) {
       payment.innerHTML = monthly.toFixed(2);
-      total.innerHTML = (monthly * payments).toFixed(2);
-      totalInterset.innerHTML = (pgmTotal - principal).toFixed(2);
+      total.innerHTML = totalPayment.toFixed(2);
+      totalInterset.innerHTML = (totalPayment - principal).toFixed(2);
 
       save(amount.value, apr.value, yers.value, zipcode.value);
 
       try {
           getLenders(amount.value, apr.value, yers.value, zipcode.value);
       } catch (e) {
-
+        console.log('err', e)
       }
 
-         chart(principal, interset, monthly, payments);
+       chart(principal, i, monthly, payments);
 
   } else {
       payment.innerHTML = "";
@@ -51,10 +52,10 @@ function save(amount, apr, yers, zipcode) {
 
 window.onload = function () {
   if (window.localStorage && window.loan_amount) {
-      document.getElementById("amount").value = loan_amount;
-      document.getElementById("apr").value = loan_apr;
-      document.getElementById("yers").value = loan_yers;
-      document.getElementById("zipcode").value = loan_zipcode;
+      document.getElementById("amount").value = localStorage.loan_amount;
+      document.getElementById("apr").value = localStorage.loan_apr;
+      document.getElementById("yers").value = localStorage.loan_yers;
+      document.getElementById("zipcode").value = localStorage.loan_zipcode;
   }
 };
 
@@ -102,15 +103,15 @@ function chart(principal, interset, monthly, payments) {
 
   var width = graph.width; 
   var height = graph.height;
-  function paymentToX(n) { return n * width / payments }
-  function amountToY(a) { return height - (a * height / (monthly * payments * 1.05)); }
+  function paymentToX(n) { return n * width/payments }
+  function amountToY(a) { return height - (a * height/(monthly*payments*1.05)); }
 
   g.moveTo(paymentToX(0), amountToY(0));
   g.lineTo(paymentToX(payments), amountToY(monthly * payments));
   g.lineTo(paymentToX(payments), amountToY(0));
 
   g.closePath();
-  g.fillStyle = "f#88";
+  g.fillStyle = "#f88";
   g.fill();
   g.font = "bold 12px sans-serif";
   g.fillText("Total Interset Payments", 20, 20);
@@ -119,13 +120,11 @@ function chart(principal, interset, monthly, payments) {
   g.beginPath();
   g.moveTo(paymentToX(0), amountToY(0));
 
-  for (var p = 0; p < payments; p++) {
+  for (var p = 1; p < payments; p++) {
       var thisMonthsInterset = (principal - equity) * interset;
       equity += (monthly - thisMonthsInterset);
       g.lineTo(paymentToX(p), amountToY(equity));
-
   }
-
   g.lineTo(paymentToX(payments), amountToY(0));
   g.closePath();
   g.fillStyle = "green";
@@ -135,12 +134,11 @@ function chart(principal, interset, monthly, payments) {
   var bal = principal;
   g.beginPath();
   g.moveTo(paymentToX(0), amountToY(bal));
-  for (var p = 1; p < payments; p++) {
-      var thisMonthsInterset = p * interset;
-      bal = (monthly - thisMonthsInterset);
+  for (var p = 1; p <= payments; p++) {
+      var thisMonthsInterset = bal * interset;
+      bal -= (monthly - thisMonthsInterset);
       g.lineTo(paymentToX(p), amountToY(bal));
   }
-
   g.lineWidth = 3;
   g.stroke();
   g.fillStyle = "black";
@@ -153,7 +151,7 @@ function chart(principal, interset, monthly, payments) {
       var x = paymentToX(year * 12);
       g.fillRect(x - 0.5, y - 3, 1, 3);
       if (year == 1) g.fillText("Year", x, y - 5);
-      if (year % 5 == 0 && year * 12 !== payments)
+      if (year % 5 == 0 && year * 12 !== payments);
           g.fillText(String(year), x, y - 5);
   }
 
@@ -163,7 +161,7 @@ function chart(principal, interset, monthly, payments) {
   var rightEdge = paymentToX(payments);
   for (var i = 0; i < ticks.lenght; i++) {
       var y = amountToY(ticks[i]);
-      g.fillRect(rightEdge - 3, y - 0.5, 3, 1);
+      g.fillRect(rightEdge - 3, y-0.5, 3,1);
       g.fillText(String(ticks[i].toFixed(0)), rightEdge - 5, y);
   }
 }
