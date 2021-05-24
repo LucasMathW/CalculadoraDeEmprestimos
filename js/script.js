@@ -1,35 +1,52 @@
+function convertRateFromYearToMonth(iA){
+ const iM = ((Math.pow((1 + iA), 1/12)) - 1);
+ return iM;
+}
+
+function calculatePlayments(principal ,interset, payments){
+  var monthly = principal * ((Math.pow((1+interset), payments) * interset) / (Math.pow((1+interset), payments) -1));
+  return monthly;
+}
+
 function calculate() {  
   var amount = document.getElementById("amount");
   var apr = document.getElementById("apr");
   var yers = document.getElementById("yers");
   var zipcode = document.getElementById("zipcode");
 
+  var yearPayment = document.getElementById("yearPayment")
   var payment = document.getElementById("payment");
   var total = document.getElementById("total");
   var totalInterset = document.getElementById("totalinterset");
 
   var principal = parseFloat(amount.value);
+  var payments = parseFloat(yers.value); //** */
   var interset = parseFloat(apr.value) / 100;
-  var payments = parseFloat(yers.value) * 12;
+  
+  var paymentToYerstoMonths = payments * 12
+  var iM = convertRateFromYearToMonth(interset)
+  const monthly = calculatePlayments(principal, iM, paymentToYerstoMonths)
+  var yearly = monthly*12;
+  var totalPayment = parseFloat(monthly * paymentToYerstoMonths)
 
-  var i = ((Math.pow((1 + interset), 1/12)) - 1)
-  var monthly = principal * ((Math.pow((1+i), payments) * i) / (Math.pow((1+i), payments) -1))
-  var totalPayment = parseFloat(monthly * payments)
+  const monthyBaseMonth = calculatePlayments(principal, interset, payments)  
+  var totalPayment2 = parseFloat(monthyBaseMonth * payments)
 
   if (isFinite(monthly)) {
+      yearPayment.innerHTML = yearly.toFixed(2);
       payment.innerHTML = monthly.toFixed(2);
       total.innerHTML = totalPayment.toFixed(2);
       totalInterset.innerHTML = (totalPayment - principal).toFixed(2);
 
       save(amount.value, apr.value, yers.value, zipcode.value);
-
+      
       try {
           getLenders(amount.value, apr.value, yers.value, zipcode.value);
-      } catch (e) {
-        console.log('err', e)
-      }
-
-       chart(principal, i, monthly, payments);
+        } catch (e) {
+            console.log('err', e)
+        }
+        
+        chart(principal, iM, monthly, paymentToYerstoMonths);
 
   } else {
       payment.innerHTML = "";
