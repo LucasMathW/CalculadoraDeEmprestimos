@@ -17,21 +17,35 @@
         <tr>
             <td>Mountante de Emprestimo $:</td>
             <td><input id="amount" onchange="calculate();"></td>
-
             <td rowspan=8>
                 <canvas id="graph" width="400" height="250"></canvas>
             </td>
-
         </tr>
 
         <tr>
-            <td>Periodo de pagamantos anuais: </td>
-            <td><input id="yers" onchenge="calculate();"></td>
+            <td>Periodo de pagamantos: </td>
+            <td>
+               <div>
+                   <input id="yers" onchenge="calculate();">
+                   <select>
+                       <option value="ano">anos</option>
+                       <option value="mes">meses</option> 
+                   </select>
+               </div>
+            </td>
         </tr>
 
         <tr>
-            <td> Juros anuais em %: </td>
-            <td><input id="apr" onchange="calculate();"></td>
+            <td> taxa de juros %: </td>
+            <td> 
+                <div> 
+                    <input id="apr" onchange="calculate();"> 
+                    <select name="" id="">
+                        <option value="ano">anuais</option>
+                        <option value="mes">mensais</option>
+                    </select> 
+                </div>  
+            </td>
         </tr>
 
         <tr>
@@ -40,23 +54,29 @@
         </tr>
 
         <tr>
-            <td>Pagamento aprximado:</td>
+            <td>Pagamento aproxímado:</td>
             <td><button onclick="calculate();">calculate</button></td>
         </tr>
-
+      <!-- OUTputs -->
+      
         <tr>
-            <td>Pagamento mensal</td>
-            <td>$<span class="output" id="payment"></span></td>
-        </tr>
+          <td>Pagamento mensal</td>
+          <td>$ <span class="output" id="payment"></span></td>
+        </tr> 
+        
+       <!-- <tr>
+            <td>Pagamento anaual</td>
+            <td>$ <span class="output" id="yearPayment"></span> </td>
+        </tr> -->
 
         <tr>
             <td> Pagamento total: </td>
-            <td>$<span class="output" id="total"></span></td>
+            <td>$ <span class="output" id="total"></span></td>
         </tr>
 
         <tr>
             <td>Juros total:</td>
-            <td>$<span class="output" id="totalinterset"></span></td>
+            <td>$ <span class="output" id="totalinterset"></span></td>
         </tr>
     </table>
 
