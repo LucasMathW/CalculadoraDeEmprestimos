@@ -3,50 +3,69 @@ function convertRateFromYearToMonth(iA){
  return iM;
 }
 
-function calculatePlayments(principal ,interset, payments){
+function calculatePayments(principal ,interset, payments){
   var monthly = principal * ((Math.pow((1+interset), payments) * interset) / (Math.pow((1+interset), payments) -1));
   return monthly;
+}
+
+function onChangeTypeApr(){
+  var periodType = document.getElementsByName("periodType")[0]
+  var aprType = document.getElementsByName("aprType")[0]
+  aprType.value = periodType.value;
+}
+
+function onChangeTypePeriod(){
+  var periodType = document.getElementsByName("periodType")[0]
+  var aprType = document.getElementsByName("aprType")[0]
+  periodType.value = aprType.value;
 }
 
 function calculate() {  
   var amount = document.getElementById("amount");
   var apr = document.getElementById("apr");
-  var yers = document.getElementById("yers");
+  var period = document.getElementById("period");
   var zipcode = document.getElementById("zipcode");
+  var periodType = document.getElementsByName("periodType")[0]
 
-  var yearPayment = document.getElementById("yearPayment")
   var payment = document.getElementById("payment");
   var total = document.getElementById("total");
   var totalInterset = document.getElementById("totalinterset");
 
-  var principal = parseFloat(amount.value);
-  var payments = parseFloat(yers.value); //** */
-  var interset = parseFloat(apr.value) / 100;
-  
-  var paymentToYerstoMonths = payments * 12
-  var iM = convertRateFromYearToMonth(interset)
-  const monthly = calculatePlayments(principal, iM, paymentToYerstoMonths)
-  var yearly = monthly*12;
-  var totalPayment = parseFloat(monthly * paymentToYerstoMonths)
+  const principal = parseFloat(amount.value);
+  const paymentsSPeriod = parseFloat(period.value);
+  const intersetRate = parseFloat(apr.value) / 100;
 
-  const monthyBaseMonth = calculatePlayments(principal, interset, payments)  
-  var totalPayment2 = parseFloat(monthyBaseMonth * payments)
+  let monthly = 0
+  let totalPayment = 0
+  let iM = 0
+
+  if(periodType.value === "yerly"){
+    var payments = paymentsSPeriod * 12
+    iM = convertRateFromYearToMonth(intersetRate)
+    monthly = calculatePayments(principal, iM, payments)
+    totalPayment = parseFloat(monthly * payments)
+  }else{
+    var payments = paymentsSPeriod;
+    iM = intersetRate;
+    console.log('iM', intersetRate) 
+    monthly = calculatePayments(principal, iM, payments)
+    totalPayment = parseFloat(monthly * payments)
+  }
 
   if (isFinite(monthly)) {
-      yearPayment.innerHTML = yearly.toFixed(2);
       payment.innerHTML = monthly.toFixed(2);
       total.innerHTML = totalPayment.toFixed(2);
       totalInterset.innerHTML = (totalPayment - principal).toFixed(2);
 
-      save(amount.value, apr.value, yers.value, zipcode.value);
+      save(amount.value, apr.value, period.value, zipcode.value);
       
       try {
-          getLenders(amount.value, apr.value, yers.value, zipcode.value);
+          getLenders(amount.value, apr.value, period.value, zipcode.value);
         } catch (e) {
             console.log('err', e)
         }
         
-        chart(principal, iM, monthly, paymentToYerstoMonths);
+        chart(principal, iM, monthly, payments);
 
   } else {
       payment.innerHTML = "";
